@@ -132,7 +132,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=crop_and_mask_raster.R d2k-toolbox
 ### Step 6A: Attach Legend to CORINE CLC
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=attach_legend_to_corineCLC.R d2k-toolbox "/out/coryear2018.rds" "/out/corine2018_cropped.rds" "/out/urban_values.rds" "/out/clc_legend.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=attach_legend_to_corineCLC.R d2k-toolbox "/out/coryear2018.rds" "/out/corine2018_cropped.rds" "/out/clc_legend.rds"
 ```
 
 ---
@@ -148,7 +148,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=data_intersect.R d2k-toolbox "/out
 ### Step 7: Calculate Weighting
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=calculate_weighting.R d2k-toolbox "/out/censusgrid_covering_lau.rds" "/out/corine2018_cropped.rds" "/out/urban_values.rds" "/out/coryear2018.rds" "/out/clc_legend.rds" "/out/weight_table_final.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=calculate_weighting.R d2k-toolbox "/out/censusgrid_covering_lau.rds" "/out/corine2018_cropped.rds" "/out/coryear2018.rds" "/out/clc_legend.rds" "/out/weight_table_final.rds"
 ```
 
 ---
