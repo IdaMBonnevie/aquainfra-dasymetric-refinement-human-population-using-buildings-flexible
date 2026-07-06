@@ -6,10 +6,10 @@
     "en": "Dasymetric refinement of LAU population to raster cells"
   },
   "description": {
-    "en": "Performs dasymetric refinement of LAU (Local Administrative Unit) human population for a chosen focus year, redistributing population to finer CORINE Land Cover raster cells (approx. 1 km2) within a catchment. With refinement type 'weighted', population is distributed across urban CORINE classes according to the supplied weight table. With refinement type 'simple', a binary distribution restricted to urbanised CORINE classes 111 and 112 is used instead (R function 'dasymetric_refinement_raster')"
+    "en": "Performs dasymetric refinement of LAU (Local Administrative Unit) human population for a chosen focus year, redistributing population to finer CORINE Land Cover raster cells (approx. 1 km2) within a catchment, further refined using EUBUCCO building footprints. With refinement type 'weighted', population is distributed across urban CORINE classes according to the supplied weight table, with raster cells whose building count passes an optimised threshold also treated as populated. With refinement type 'simple', a binary distribution restricted to urbanised CORINE classes 111 and 112 is used instead. When the focus year is 2021 and refinement type is not 'simple', a building-count threshold search is run internally, scored against the observed census grid population; the resulting threshold can be reused for other focus years (R function 'dasymetric_refinement_raster')"
   },
   "jobControlOptions": ["sync-execute", "async-execute"],
-  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "CORINE", "LAU", "population refinement"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "CORINE", "LAU", "EUBUCCO", "buildings", "population refinement"],
   "links": [{
     "type": "text/html",
     "rel": "about",
@@ -94,6 +94,39 @@
       "minOccurs": 1,
       "maxOccurs": 1,
       "keywords": []
+    },
+    "inputFile7_buildings_rds": {
+      "title": "EUBUCCO building footprints",
+      "description": "Path to an .rds file containing EUBUCCO building footprints (sf object) for the catchment, with a 'construction_year' column. Only buildings constructed in or before the focus year (or with unknown construction year) are used.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile8_censusGrid_rds": {
+      "title": "Census grid (cropped)",
+      "description": "Path to an .rds file containing the Eurostat census grid (observed population, column 'TOT_P_2021') cropped to the catchment. Used to score candidate building-count thresholds during the internal threshold search.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile9_bestThresholdIfExisting_rds": {
+      "title": "Existing building-count threshold (optional)",
+      "description": "Path to an .rds file containing a building-count threshold found by a previous run (e.g. for focus year 2021), to be reused instead of re-running the search. If the file does not yet exist, it is created containing NA, which triggers the internal search when the focus year is 2021.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 0,
+      "maxOccurs": 1,
+      "keywords": []
     }
   },
   "outputs": {
@@ -120,6 +153,22 @@
         "type": "object",
         "contentMediaType": "application/x-rds"
       }
+    },
+    "corine_final": {
+      "title": "CORINE raster with buildings incorporated",
+      "description": "The CORINE raster with classes 111/112 combined with additional cells whose building count passed the (found or supplied) threshold, saved as .rds.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "best_threshold": {
+      "title": "Building-count threshold used",
+      "description": "The building-count threshold used for this run: either found by the internal search (focus year 2021) or reused from 'inputFile9_bestThresholdIfExisting_rds'. Intended to be passed as that input on subsequent runs for other focus years.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
     }
   },
   "example": {
@@ -130,7 +179,10 @@
       "inputFile3_lauInCatchment_rds": "lau_2018_catchment.rds",
       "inputFile4_popFocusYear_rds": "2018.rds",
       "inputFile5_catchment_gpkg": "catchment.gpkg",
-      "inputFile6_weightTable_rds": "weight_table_final.rds"
+      "inputFile6_weightTable_rds": "weight_table_final.rds",
+      "inputFile7_buildings_rds": "eubucco_buildings.rds",
+      "inputFile8_censusGrid_rds": "censusgrid_catchment.rds",
+      "inputFile9_bestThresholdIfExisting_rds": "best_threshold_2021.rds"
     }
   }
 }
