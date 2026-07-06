@@ -22,6 +22,7 @@ Replace `<your-username>` with your GitHub username after pushing this repositor
 |----------|--------------|-----|
 | **LAU Data** | Local Administrative Units population data (Germany) | It is called directly from the Eurostat and GiscoR libraries |
 | **Census Grid** | Census grid polygons | https://gisco-services.ec.europa.eu/grid/grid_1km.parquet |
+| **EUBUCCO buildings** | Harmonised European building dataset | https://eubucco.com/files/v0.2 |
 | **CORINE Raster** | CORINE Land Cover raster  2018/2006/2000| https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2018ACC_V2018_20_cog.tif or https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2006ACC_V2018_20_cog.tif or https://aquainfra-syke.a3s.fi/europe_clc_cog_raster/CLC2000ACC_V2018_20_cog.tif |
 | **Subbasins** | ECRINS subbasin geometries for Elbe | https://water.discomap.eea.europa.eu/arcgis/rest/services/Ecrins/ECRINS_FunctionalElementaryCatchments/MapServer/0/query |
 
@@ -68,6 +69,14 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=get_lau_data.R d2k-toolbox "/out/c
 
 ```bash
 docker run -it --rm -v ./out:/out -e R_SCRIPT=get_census_grid.R d2k-toolbox "/out/countries.rds" "/out/censusgrid.rds"
+```
+
+---
+
+### Step 2D: Get EUBUCCO buildings
+
+```bash
+docker run -it --rm -v ./out:/out -e R_SCRIPT=get_eubucco_buildings.R d2k-toolbox "/out/catchment.gpkg" "/out/countries.rds" "/out/buildings.rds"
 ```
 
 ---
@@ -139,7 +148,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=data_intersect.R d2k-toolbox "/out
 ### Step 7: Calculate Weighting
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=calculate_weighting.R d2k-toolbox "/out/censusgrid_catchment.rds" "/out/corine2018_cropped.rds" "/out/urban_values.rds" "/out/coryear2018.rds" "/out/clc_legend.rds" "/out/weight_table_final.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=calculate_weighting.R d2k-toolbox "/out/censusgrid_covering_lau.rds" "/out/corine2018_cropped.rds" "/out/urban_values.rds" "/out/coryear2018.rds" "/out/clc_legend.rds" "/out/weight_table_final.rds"
 ```
 
 ---
@@ -152,18 +161,18 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=keep_only_valid_corineCLCclasses.R
 
 ---
 
-### Step 9A: Dasymetric Refinement (Weighted, 2018)
+### Step 9A: Dasymetric Refinement (Weighted, 2021)
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2018_catchment.rds" "/out/2018.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/refinement_weighted_2018.rds" "/out/refinement_weighted_2018.tif" "/out/lau_cell_counts_weighted2018.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_weighted_2021.rds" "/out/refinement_weighted_2021.tif" "/out/lau_cell_counts_weighted2021.rds" "/out/corine2018_final.rds" "/out/best_treshold.rds"
 ```
 
 ---
 
-### Step 9B: Dasymetric Refinement (Weighted, 2021)
+### Step 9B: Dasymetric Refinement (Weighted, 2018)
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/refinement_weighted_2021.rds" "/out/refinement_weighted_2021.tif" "/out/lau_cell_counts_weighted2021.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "weighted" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2018_catchment.rds" "/out/2018.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/refinement_weighted_2018.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_weighted_2018.tif" "/out/lau_cell_counts_weighted2018.rds" "/out/corine2018_extra1.rds" "/out/best_treshold_extra1.rds"
 ```
 
 ---
@@ -171,7 +180,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbo
 ### Step 9C: Dasymetric Refinement (Simple, 2021)
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "simple" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/refinement_simple_2021.rds" "/out/refinement_simple_2021.tif" "/out/lau_cell_counts_simple2021.rds"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=dasymetric_refinement.R d2k-toolbox "simple" "/out/corine2018_valid.rds" "/out/coryear2018.rds" "/out/lau_2021_catchment.rds" "/out/2021.rds" "/out/catchment.gpkg" "/out/weight_table_final.rds" "/out/buildings.rds" "/out/censusgrid_catchment.rds" "/out/best_threshold.rds" "/out/refinement_simple_2021.rds" "/out/refinement_simple_2021.tif" "/out/lau_cell_counts_simple2021.rds" "/out/corine2018_extra2.rds" "/out/best_treshold_extra2.rds"
 ```
 
 ---
@@ -203,7 +212,7 @@ docker run -it --rm -v ./out:/out -e R_SCRIPT=crop_and_mask_raster.R d2k-toolbox
 ### Step 12: Create Final Visualizations
 
 ```bash
-docker run -it --rm -v ./out:/out -e R_SCRIPT=process_create_visualizations.R d2k-toolbox "/out/weight_table_final.rds" "/out/clc_legend.rds" "/out/coryear2018.rds" "/out/visual_input_weights_histogram.html" "/out/lau_cell_counts_weighted2018.rds" "/out/visual_cor_distribution_across_lau.html" "/out/censusgrid.rds" "/out/evaluate_weighted_2021.rds" "/out/catchment.gpkg" "/out/visual_census_grid_map.html" "/out/2018.rds" "/out/lau_2018_catchment.rds" "/out/visual_lau_in_catch_focus_map.html" "/out/lau_2021_catchment.rds" "/out/visual_lau_in_catch_reference_map.html" "/out/corine2018_valid.rds" "/out/visual_corineCLC_valid_map.html" "/out/corineCLC2018overlappingPositivePop2021.rds" "/out/visual_corineCLCoverlappingPosCensusgrid_map.html" "/out/refinement_weighted_2021.rds" "/out/visual_refinement_map.html" "/out/visual_error_map.html" "50" "10" "/out/visual_binaryPercError_map.html" "/out/visual_histogram_errorsDistributedOnDensClasses.html" "/out/metrics_weighted.rds" "/out/metrics_simple.rds" "/out/visual_histogram_metrics.html"
+docker run -it --rm -v ./out:/out -e R_SCRIPT=process_create_visualizations.R d2k-toolbox "/out/weight_table_final.rds" "/out/clc_legend.rds" "/out/coryear2018.rds" "/out/visual_input_weights_histogram.html" "/out/lau_cell_counts_weighted2018.rds" "/out/visual_cor_distribution_across_lau.html" "/out/censusgrid.rds" "/out/evaluate_weighted_2021.rds" "/out/catchment.gpkg" "/out/visual_census_grid_map.html" "/out/2018.rds" "/out/lau_2018_catchment.rds" "/out/visual_lau_in_catch_focus_map.html" "/out/lau_2021_catchment.rds" "/out/visual_lau_in_catch_reference_map.html" "/out/corine2018_final.rds" "/out/visual_corineCLC_valid_map.html" "/out/corineCLC2018overlappingPositivePop2021.rds" "/out/visual_corineCLCoverlappingPosCensusgrid_map.html" "/out/refinement_weighted_2021.rds" "/out/visual_refinement_map.html" "/out/visual_error_map.html" "50" "10" "/out/visual_binaryPercError_map.html" "/out/visual_histogram_errorsDistributedOnDensClasses.html" "/out/metrics_weighted.rds" "/out/metrics_simple.rds" "/out/visual_histogram_metrics.html"
 ```
 
 ---
