@@ -1,0 +1,49 @@
+{
+  "version": "0.1.0",
+  "id": "get-census-grid",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get Eurostat census grid"
+  },
+  "description": {
+    "en": "Fetches the Eurostat/GISCO 1 km population census grid for the given countries directly from the GISCO web service, builds 1 km x 1 km grid cell polygons (EPSG:3035) from the cell corner coordinates, and validates the resulting geometries (R function 'get_census_grid')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "Eurostat", "GISCO", "census grid", "population"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_countries_rds": {
+      "title": "Countries for catchment",
+      "description": "Path to an .rds file containing the list of country codes (matching GISCO's CNTR_ID values) for which to fetch the census grid.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "censusgrid": {
+      "title": "Eurostat census grid",
+      "description": "The Eurostat/GISCO 1 km population census grid, filtered to the requested countries, with validated polygon geometries in EPSG:3035.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_countries_rds": "countries.rds"	
+    }
+  }
+}
+

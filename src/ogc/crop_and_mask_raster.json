@@ -1,0 +1,61 @@
+{
+  "version": "0.1.0",
+  "id": "crop-and-mask-raster",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Crop and mask raster to analysis extent"
+  },
+  "description": {
+    "en": "Crops and masks an existing CORINE CLC raster to a given spatial analysis extent (e.g. a catchment or country boundary), returning only the raster cells within that geometry (R function 'get_raster_for_geometry')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "CORINE", "raster", "crop", "mask"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_corineCLC_rds": {
+      "title": "CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster) to be cropped and masked.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_analysisExtent_gpkg": {
+      "title": "Analysis spatial extent",
+      "description": "Path to a GeoPackage file containing the spatial extent geometry (e.g. catchment or country boundary) to crop and mask the raster to.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/geopackage+sqlite3"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "corineCLC_cropped": {
+      "title": "Cropped and masked CORINE CLC raster",
+      "description": "The CORINE CLC raster (SpatRaster), cropped and masked to the given spatial analysis extent.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_corineCLC_rds": "corine2018.rds",
+      "inputFile2_analysisExtent_gpkg": "analysis_spatial_extent.gpkg"	
+    }
+  }
+}
+

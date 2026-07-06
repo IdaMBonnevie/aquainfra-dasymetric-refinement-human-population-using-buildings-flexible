@@ -1,0 +1,57 @@
+{
+  "version": "0.1.0",
+  "id": "get-corineCLC",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get CORINE CLC raster for focus year"
+  },
+  "description": {
+    "en": "Selects and fetches the CORINE Land Cover (CLC) raster covering the European Union for the CORINE release year closest to the given population focus year, loading it directly from a remote Cloud-Optimized GeoTIFF (COG). Focus years 2015-2024 resolve to CORINE 2018; focus years 2011-2014 resolve to CORINE 2012. Returns both the raster and the resolved CORINE year"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "CORINE", "land cover", "raster"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_focusYear_rds": {
+      "title": "Population focus year",
+      "description": "Path to an .rds file containing the focus year for population data as a single value, used to determine which CORINE CLC release year to fetch. Allowed years are 2011 through 2024.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "corineCLC": {
+      "title": "CORINE CLC raster",
+      "description": "The CORINE Land Cover raster (SpatRaster) covering the European Union, for the CORINE release year resolved from the focus year.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "corine_year": {
+      "title": "Resolved CORINE year",
+      "description": "The CORINE CLC release year ('2018' or '2012') that was resolved from the input focus year and used to fetch the raster.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_focusYear_rds": "2021.rds"	
+    }
+  }
+}
+

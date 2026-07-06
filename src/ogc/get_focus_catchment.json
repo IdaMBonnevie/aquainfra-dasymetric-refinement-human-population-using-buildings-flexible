@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "id": "get-focus-catchment",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get focus catchment"
+  },
+  "description": {
+    "en": "Queries the EEA ECRINS (European Catchments and Rivers Network System) ArcGIS REST service for a specific functional elementary catchment by ID, fixes invalid geometries, reprojects to EPSG:3035, and looks up the list of countries that catchment overlaps from a fixed catchment-to-country mapping (R function 'get_specific_catchment'). Valid catchment IDs range from 1 to 118"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "ECRINS", "catchment", "river basin"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "catchment_id": {
+      "title": "Catchment ID",
+      "description": "The ECRINS functional elementary catchment ID to retrieve. Must be an integer from 1 to 118.",
+      "schema": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 118
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "catchment": {
+      "title": "Catchment geometry",
+      "description": "The retrieved ECRINS catchment boundary (MULTIPOLYGON), reprojected to EPSG:3035, saved as a GeoPackage.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/geopackage+sqlite3"
+      }
+    },
+    "countries": {
+      "title": "Countries for catchment",
+      "description": "The list of country codes that the requested catchment overlaps, looked up from a fixed catchment-to-country mapping.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "catchment_id": "115"
+    }
+  }
+}
+

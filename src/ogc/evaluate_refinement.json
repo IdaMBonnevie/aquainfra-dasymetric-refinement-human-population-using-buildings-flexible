@@ -1,0 +1,117 @@
+{
+  "version": "0.1.0",
+  "id": "evaluate-refinement",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Evaluate dasymetric refinement results"
+  },
+  "description": {
+    "en": "Evaluates dasymetric refinement results by comparing weighted and simple refinement rasters against observed census grid population (reference year 2021, treated as ground truth). Produces two evaluation datasets (one per refinement type) with absolute and percentage differences, accuracy metrics (bias, MAE, MdAE, MSE, RMSE, MAPE) for each, and a CORINE CLC raster restricted to cells overlapping census grid cells with positive observed population (R functions 'add_evaluations_to_censusgrid' and 'get_only_corineCLC_overlapping_positive_pop')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "evaluation", "accuracy metrics", "census grid", "CORINE"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_refinementWeightedReference_rds": {
+      "title": "Weighted refinement raster (reference year)",
+      "description": "Path to an .rds file containing the packed (terra::wrap) dasymetric refinement output raster from the 'weighted' refinement type, for the reference year (2021).",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_refinementSimpleReference_rds": {
+      "title": "Simple refinement raster (reference year)",
+      "description": "Path to an .rds file containing the packed (terra::wrap) dasymetric refinement output raster from the 'simple' refinement type, for the reference year (2021).",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile3_censusgrid_rds": {
+      "title": "Census grid",
+      "description": "Path to an .rds file containing the Eurostat census grid with observed population (column 'TOT_P_2021'), used as ground truth for evaluation.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile4_corineCLC_rds": {
+      "title": "CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster), used to derive the subset overlapping populated census grid cells.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "evaluate_weighted": {
+      "title": "Weighted refinement evaluation results",
+      "description": "Census grid with the weighted refinement's estimated population joined, including absolute difference ('dif1') and percentage difference ('dif_perc1') from observed population.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "evaluate_simple": {
+      "title": "Simple refinement evaluation results",
+      "description": "Census grid with the simple refinement's estimated population joined, including absolute difference ('dif2') and percentage difference ('dif_perc2') from observed population.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "corineCLC_only_positive": {
+      "title": "CORINE CLC overlapping positive population",
+      "description": "The CORINE CLC raster, masked to only the cells overlapping census grid cells with positive observed population.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "metrics_weighted": {
+      "title": "Accuracy metrics (weighted)",
+      "description": "Table of accuracy metrics for the weighted refinement: overall percentage error, overall average error, count of wrongly included/excluded cells, bias, MAE, MdAE, MSE, RMSE, and MAPE.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "metrics_simple": {
+      "title": "Accuracy metrics (simple)",
+      "description": "Table of accuracy metrics for the simple refinement: overall percentage error, overall average error, count of wrongly included/excluded cells, bias, MAE, MdAE, MSE, RMSE, and MAPE.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_refinementWeightedReference_rds": "refinement_weighted_2021.rds",
+      "inputFile2_refinementSimpleReference_rds": "refinement_simple_2021.rds",	
+      "inputFile3_censusgrid_rds": "censusgrid_catchment.rds",	
+      "inputFile4_corineCLC_rds": "corine2018_cropped.rds"	
+}
+  }
+}
+

@@ -1,0 +1,61 @@
+{
+  "version": "0.1.0",
+  "id": "get-analysis-extent",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get spatial analysis extent"
+  },
+  "description": {
+    "en": "Calculates the overall spatial analysis extent as the union of LAU (Local Administrative Unit) polygons selected within the catchment for the focus year. If no focus-year LAU polygons are found, the union of the reference-year LAU polygons is used instead (R script 'get_analysis_extent.R')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "spatial extent", "catchment", "LAU"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_lauFocusSelected_rds": {
+      "title": "LAU polygons in catchment (focus year)",
+      "description": "Path to an .rds file containing the LAU (Local Administrative Unit) polygons selected within the catchment for the focus year.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_lauReferenceSelected_rds": {
+      "title": "LAU polygons in catchment (reference year)",
+      "description": "Path to an .rds file containing the LAU (Local Administrative Unit) polygons selected within the catchment for the reference year, used as a fallback if no focus-year LAU polygons are found.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "analysis_extent": {
+      "title": "Spatial analysis extent",
+      "description": "The union of the selected LAU polygons (focus year, or reference year as fallback), saved as a single GeoPackage geometry representing the overall spatial analysis extent.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/geopackage+sqlite3"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_lauFocusSelected_rds": "lau_2018_catchment.rds",
+      "inputFile2_lauReferenceSelected_rds": "lau_2021_catchment.rds"	
+    }
+  }
+}
+

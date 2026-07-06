@@ -1,0 +1,8 @@
+# R
+.Rhistory
+.RData
+.Rproj.user
+.Renviron
+
+# python
+__pycache__

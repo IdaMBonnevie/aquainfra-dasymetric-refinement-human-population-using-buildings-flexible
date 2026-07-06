@@ -1,0 +1,96 @@
+{
+  "version": "0.1.0",
+  "id": "calculate-weighting",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Calculate dasymetric weighting table"
+  },
+  "description": {
+    "en": "Calculates population-density-based weights per CORINE Land Cover class by overlapping the Eurostat census grid (human population) with the CORINE CLC 2018 raster, treating continuous urban fabric (111) and discontinuous urban fabric (112) classes separately from other urban classes (R function 'calculate_weighting')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "CORINE", "census grid", "weighting"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_censusgridSelected_rds": {
+      "title": "Census grid (selected/clipped)",
+      "description": "Path to an .rds file containing the Eurostat census grid (human population, e.g. column 'TOT_P_2021') clipped to the area of interest.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_corineCLCcropped_rds": {
+      "title": "CORINE CLC raster (cropped)",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster), cropped to the area of interest.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile3_corUrbanValues_rds": {
+      "title": "Urban CORINE CLC codes",
+      "description": "Path to an .rds file containing the list of CORINE CLC class codes classified as urban (codes 100\u2013199).",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile4_corineYear_rds": {
+      "title": "CORINE reference year",
+      "description": "Path to an .rds file containing the CORINE CLC reference year as a single value. Only year 2018 is currently supported by this function.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile5_clcLegend_rds": {
+      "title": "CORINE CLC legend table",
+      "description": "Path to an .rds file containing the CORINE CLC legend table with class codes, labels, and RGB colors.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "weight_table": {
+      "title": "Dasymetric weighting table",
+      "description": "Table with CORINE CLC class code, label, and the percentage weight of average population density attributed to that class, for use in dasymetric population mapping.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_censusgridSelected_rds": "censusgrid_catchment.rds",
+      "inputFile2_corineCLCcropped_rds": "corine2018_cropped.rds",
+      "inputFile3_corUrbanValues_rds": "urban_values.rds",
+      "inputFile4_corineYear_rds": "coryear2018.rds",
+      "inputFile5_clcLegend_rds": "clc_legend.rds"
+    }
+  }
+}

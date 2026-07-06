@@ -1,0 +1,136 @@
+{
+  "version": "0.1.0",
+  "id": "dasymetric-refinement",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Dasymetric refinement of LAU population to raster cells"
+  },
+  "description": {
+    "en": "Performs dasymetric refinement of LAU (Local Administrative Unit) human population for a chosen focus year, redistributing population to finer CORINE Land Cover raster cells (approx. 1 km2) within a catchment. With refinement type 'weighted', population is distributed across urban CORINE classes according to the supplied weight table. With refinement type 'simple', a binary distribution restricted to urbanised CORINE classes 111 and 112 is used instead (R function 'dasymetric_refinement_raster')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "CORINE", "LAU", "population refinement"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "refinement_type": {
+      "title": "Refinement type",
+      "description": "The dasymetric refinement strategy to use. 'weighted' distributes population across urban CORINE classes according to the weight table. 'simple' uses a binary distribution restricted to CORINE classes 111 and 112 only, with all weights set equal.",
+      "schema": {
+        "type": "string",
+        "enum": ["simple", "weighted"]
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile1_corineCLC_rds": {
+      "title": "CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster) used as ancillary data for the refinement.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_corineYear_rds": {
+      "title": "CORINE reference year",
+      "description": "Path to an .rds file containing the CORINE CLC reference year as a single value. Only year 2018 is currently supported by this function.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile3_lauInCatchment_rds": {
+      "title": "LAU polygons in catchment",
+      "description": "Path to an .rds file containing LAU (Local Administrative Unit) polygons within the catchment, with a 'LAU_ID' column and an observed population column for the focus year.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile4_popFocusYear_rds": {
+      "title": "Population focus year",
+      "description": "Path to an .rds file containing the focus year for population data as a single value, used to select the LAU population column (e.g. 'POP_2018').",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile5_catchment_gpkg": {
+      "title": "Catchment geometry",
+      "description": "Path to a GeoPackage file containing the catchment boundary used to crop and mask the refinement output raster.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/geopackage+sqlite3"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile6_weightTable_rds": {
+      "title": "Weight table",
+      "description": "Path to an .rds file containing the dasymetric weighting table (CORINE class code, label, percent weight). Used as-is for 'weighted' refinement; for 'simple' refinement, only classes 111 and 112 are retained and all weights are set equal.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "refinement_rds": {
+      "title": "Estimated population raster (.rds)",
+      "description": "The dasymetric refinement output raster (SpatRaster, band named 'pop_est'), cropped and masked to the catchment, with estimated population per cell rounded to 1 decimal. Saved in R's native .rds format for use in subsequent pipeline steps.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "refinement_tif": {
+      "title": "Estimated population raster (GeoTIFF)",
+      "description": "The same dasymetric refinement output raster as 'refinement_rds', saved as a GeoTIFF file for use in GIS software.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "image/tiff; application=geotiff"
+      }
+    },
+    "cell_statistics": {
+      "title": "LAU-CORINE cell statistics",
+      "description": "Table of raster cell counts per combination of LAU ID and CORINE class, used for downstream statistics and visualisation (e.g. distribution of CORINE classes across LAU).",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "refinement_type": "weighted",
+      "inputFile1_corineCLC_rds": "corine2018_valid.rds",
+      "inputFile2_corineYear_rds": "coryear2018.rds",
+      "inputFile3_lauInCatchment_rds": "lau_2018_catchment.rds",
+      "inputFile4_popFocusYear_rds": "2018.rds",
+      "inputFile5_catchment_gpkg": "catchment.gpkg",
+      "inputFile6_weightTable_rds": "weight_table_final.rds"
+    }
+  }
+}

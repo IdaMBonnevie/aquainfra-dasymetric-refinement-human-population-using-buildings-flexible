@@ -1,0 +1,53 @@
+# /.binder/environment.yml
+# This file specifies the complete computational environment using Conda.
+name: human-population-toolbox
+channels:
+  - conda-forge # Use conda-forge as the primary (and only) channel
+  - nodefaults  # Do NOT fall back to the Anaconda 'defaults' channel (licensing + reproducibility)
+dependencies:
+  # --- 1. R Runtime ---
+  # R 4.4 is required so conda-forge can supply terra >= 1.8.5 and tmap 4.x as
+  # binaries (the create_visualisations.R script uses the tmap 4 API). On R 4.3
+  # conda-forge caps at terra 1.7.83 / tmap 3.3, which are mutually incompatible.
+  - r-base=4.4 # The R language interpreter (version 4.4)
+
+  # --- 2. Core System Geospatial Libs (KEEP ALL) ---
+  - gdal # Geospatial Data Abstraction Library
+  - proj # Library for coordinate reference system (CRS) transformations
+  - geos # Geometry Engine, Open Source
+  - udunits2 # Library for handling scientific units
+
+  # --- 3. R Packages (Conda-Installed) ---
+  - r-sf # Simple Features
+  - r-terra # Spatial Data Analysis
+  - r-dplyr # Data Manipulation
+  # r-areal is not on conda-forge (only Anaconda defaults); installed via CRAN in
+  # .binder/postBuild instead. It is a pure-R package, so no compiler is needed.
+  - r-classint # Calculate class breaks
+  - r-ggplot2 # Data visualization
+  - r-units # Unit conversions
+  - r-rlang # Low-level R programming tools
+  - r-tidyverse # A collection of R packages for data science
+  - r-rcolorbrewer # Color palettes for maps
+  - pandoc # Document converter (NEEDED for htmlwidgets)
+  - r-curl # Dependency for R's internal package downloader
+  - r-codetools # Solves 'terra' warnings
+  - r-leaflet
+  - r-htmlwidgets
+
+  # --- 4. R Packages (added for human-population-toolbox scripts) ---
+  - r-plotly # Interactive plots (library(plotly))
+  - r-tmap # Thematic maps (library(tmap))
+  - r-metrics # Evaluation metrics: RMSE, MAE, etc. (library(Metrics))
+  - r-arrow # Apache Arrow / Parquet I/O (library(arrow))
+  - r-httr # HTTP requests (library(httr))
+
+  # (Packages missed during optimization)
+  # The following are NOT on conda-forge, so they are installed via CRAN in
+  # .binder/postBuild (all pure R, no compiler needed):
+  #   - eurostat : conda version hits a '410 Gone' API error
+  #   - giscoR   : conda only has 0.4.0 (gisco_get_lau() caps at LAU year 2020);
+  #                CRAN gives >= 0.5.0 (adds LAU year 2021+)
+  #   - areal    : not packaged on conda-forge at all
+  - r-remotes
+  - r-foreign

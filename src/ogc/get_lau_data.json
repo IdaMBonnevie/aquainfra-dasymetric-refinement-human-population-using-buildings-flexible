@@ -1,0 +1,69 @@
+{
+  "version": "0.1.0",
+  "id": "get-lau-data",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get LAU population data"
+  },
+  "description": {
+    "en": "Fetches Eurostat LAU (Local Administrative Unit) human population data for the given countries and focus year via GISCO, reprojected to EPSG:3035 (R function 'get_lau_population'). This process is used for both the population focus year and the reference year by supplying a different year value"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "Eurostat", "GISCO", "LAU", "population"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_countries_rds": {
+      "title": "Countries for catchment",
+      "description": "Path to an .rds file containing the list of country codes for which to fetch LAU population data.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "focus_year": {
+      "title": "Focus year",
+      "description": "The year for which to fetch LAU population data. Allowed years are 2011 through 2024.",
+      "schema": {
+        "type": "string",
+        "enum": ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"]
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "lau_focus": {
+      "title": "LAU population data",
+      "description": "LAU (Local Administrative Unit) polygons with observed population for the requested countries and year, reprojected to EPSG:3035.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "focusyear": {
+      "title": "Focus year (echoed)",
+      "description": "The requested focus year, saved as a single value for use in subsequent pipeline steps.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_countries_rds": "countries.rds",
+      "focus_year": "2018"	
+    }
+  }
+}
+

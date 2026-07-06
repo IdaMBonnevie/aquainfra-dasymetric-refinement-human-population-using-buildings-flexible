@@ -1,0 +1,18 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# R packages that are NOT available on conda-forge (or not at a usable version).
+# Everything else is installed as conda binaries via .binder/environment.yml.
+# All three packages below are pure R (NeedsCompilation: no), so no compiler is
+# required in the image. This script is run automatically by Binder and by the
+# Dockerfile, so the .binder folder is the single source of truth for deps.
+# ---------------------------------------------------------------------------
+
+# giscoR: not on conda-forge. Provides gisco_get_lau(); the CRAN version (>= 0.5.0)
+# supports LAU year 2021+, unlike the Anaconda-channel 0.4.0 (which caps at 2020).
+R -e "install.packages('giscoR', repos='https://cloud.r-project.org/', dependencies=TRUE)"
+
+# areal: not on conda-forge. Areal weighted interpolation (library(areal)).
+R -e "install.packages('areal', repos='https://cloud.r-project.org/', dependencies=TRUE)"
+
+# eurostat: the conda version triggers a '410 Gone' API error; use the latest CRAN.
+R -e "install.packages('eurostat', repos='https://cloud.r-project.org/', dependencies=TRUE)"

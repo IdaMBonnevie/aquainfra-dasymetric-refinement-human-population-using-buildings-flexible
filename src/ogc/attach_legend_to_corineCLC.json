@@ -1,0 +1,87 @@
+{
+  "version": "0.1.0",
+  "id": "attach-legend-to-corineCLC",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Attach legend to CORINE CLC raster"
+  },
+  "description": {
+    "en": "Attaches the official CORINE Land Cover legend (class codes, labels, and colors) to a CORINE CLC raster, and derives the list of urban CLC codes (R function 'get_raster_for_geometry' / D2K wrapper 'attach_legend_to_corineCLC')"
+  },
+  "jobControlOptions": [
+    "sync-execute",
+    "async-execute"
+  ],
+  "keywords": [
+    "human population use case",
+    "AquaINFRA",
+    "CORINE",
+    "land cover",
+    "legend"
+  ],
+  "links": [
+    {
+      "type": "text/html",
+      "rel": "about",
+      "title": "information",
+      "href": "https://example.org/process",
+      "hreflang": "en-US"
+    }
+  ],
+  "inputs": {
+    "inputFile1_corineYear_rds": {
+      "title": "CORINE reference year",
+      "description": "Path to an .rds file containing the CORINE CLC reference year as a single value. Allowed years are 2012 and 2018.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_corineCLC_rds": {
+      "title": "CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster) to which the legend should be attached. This file is overwritten with the labeled raster.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "corineCLC_with_legend": {
+      "title": "CORINE CLC raster with legend attached",
+      "description": "The CORINE CLC raster (SpatRaster), now with class codes, labels, and colors attached as raster levels/color table.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "cor_urban_values": {
+      "title": "Urban CORINE CLC codes",
+      "description": "List of CORINE CLC class codes classified as urban (codes 100–199).",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    },
+    "clc_legend": {
+      "title": "CORINE CLC legend table",
+      "description": "Full CORINE CLC legend table with class codes, labels, and RGB colors.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_corineYear_rds": "coryear2018.rds",
+      "inputFile2_corineCLC_rds": "corine2018_cropped.rds"	
+    }
+  }
+}

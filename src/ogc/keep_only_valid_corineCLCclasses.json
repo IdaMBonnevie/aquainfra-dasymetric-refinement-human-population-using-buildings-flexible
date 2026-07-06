@@ -1,0 +1,73 @@
+{
+  "version": "0.1.0",
+  "id": "keep-only-valid-corineCLCclasses",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Keep only valid CORINE CLC classes"
+  },
+  "description": {
+    "en": "Restricts a CORINE CLC raster to only the urbanised classes present in the supplied weight table, masking out (setting to NA) any raster cells whose CORINE class code does not have an assigned weight (R function 'get_only_valid_corine_categories_raster')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "CORINE", "land cover", "dasymetric mapping"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_corineCLC_rds": {
+      "title": "CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE Land Cover raster (SpatRaster), typically already cropped to the analysis extent.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile2_corineYear_rds": {
+      "title": "CORINE reference year",
+      "description": "Path to an .rds file containing the CORINE CLC reference year as a single value. Only year 2018 is currently supported by this function.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    },
+    "inputFile3_weightTable_rds": {
+      "title": "Weight table",
+      "description": "Path to an .rds file containing the dasymetric weighting table (CORINE class code, label, percent weight). Only CORINE class codes present in this table are kept.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      },
+      "minOccurs": 1,
+      "maxOccurs": 1,
+      "keywords": []
+    }
+  },
+  "outputs": {
+    "corineCLC_valid": {
+      "title": "Valid CORINE CLC raster",
+      "description": "The CORINE CLC raster, masked to only the classes present in the weight table; all other class cells are set to NA.",
+      "schema": {
+        "type": "object",
+        "contentMediaType": "application/x-rds"
+      }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_corineCLC_rds": "corine2018_cropped.rds",
+      "inputFile2_corineYear_rds": "coryear2018.rds",	
+      "inputFile3_weightTable_rds": "weight_table_final.rds"
+    }
+  }
+}
+

@@ -1,0 +1,207 @@
+{
+  "version": "0.1.0",
+  "id": "create-visualisations",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Create evaluation visualisations for dasymetric population mapping"
+  },
+  "description": {
+    "en": "Creates ten interactive HTML visualisations (histograms and maps) evaluating the dasymetric refinement results against observed census grid and LAU population data, including weight distribution, CORINE class coverage, observed/estimated population maps, absolute and percentage error maps, and accuracy metrics (R function set in 'create_visualisations.R')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "visualisation", "evaluation", "CORINE", "census grid", "LAU"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+  "inputs": {
+    "inputFile1_weightTable_rds": {
+      "title": "Weight table",
+      "description": "Path to an .rds file containing the dasymetric weighting table (CORINE class code, label, percent weight).",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile2_clcLegend_rds": {
+      "title": "CORINE CLC legend table",
+      "description": "Path to an .rds file containing the CORINE CLC legend table with class codes, labels, and RGB colors.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile3_coryear2018_rds": {
+      "title": "CORINE reference year",
+      "description": "Path to an .rds file containing the CORINE CLC reference year as a single value. Only year 2018 is currently supported by this function.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile4_cellStatistics_rds": {
+      "title": "LAU cell statistics",
+      "description": "Path to an .rds file containing per-LAU CORINE cell count statistics, used to plot the distribution of CORINE classes across LAU.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile5_censusgrid_rds": {
+      "title": "Census grid",
+      "description": "Path to an .rds file containing the Eurostat census grid (human population), used to derive population density class breaks.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile6_evaluateWeighted_rds": {
+      "title": "Weighted refinement evaluation results",
+      "description": "Path to an .rds file containing the census grid with weighted dasymetric refinement results joined (observed vs. estimated population, absolute and percentage differences).",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile7_catchment_gpkg": {
+      "title": "Catchment geometry",
+      "description": "Path to a GeoPackage file containing the focus catchment boundary, overlaid on all maps for context.",
+      "schema": { "type": "object", "contentMediaType": "application/geopackage+sqlite3" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile8_popFocusYear_rds": {
+      "title": "Population focus year",
+      "description": "Path to an .rds file containing the focus year for population data as a single value. Allowed years are 2011 through 2024.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile9_lauInCatchFocus_rds": {
+      "title": "LAU in catchment (focus year)",
+      "description": "Path to an .rds file containing LAU polygons within the catchment, with observed population for the focus year.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile10_lauInCatchReference_rds": {
+      "title": "LAU in catchment (reference year 2021)",
+      "description": "Path to an .rds file containing LAU polygons within the catchment, with observed population for reference year 2021.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile11_corineCLCvalid_rds": {
+      "title": "Valid CORINE CLC raster",
+      "description": "Path to an .rds file containing the CORINE CLC raster (SpatRaster, packed via terra::wrap) restricted to valid classes used in the refinement.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile12_corineCLConlyPositive_rds": {
+      "title": "CORINE CLC overlapping positive census grid",
+      "description": "Path to an .rds file containing the CORINE CLC raster (SpatRaster, packed via terra::wrap) restricted to cells overlapping census grid cells with positive observed population.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile13_refinement_rds": {
+      "title": "Estimated population raster (focus year)",
+      "description": "Path to an .rds file containing the dasymetric refinement output raster (band named 'pop_est') with estimated population for the focus year.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "thresholdval": {
+      "title": "Percentage error threshold",
+      "description": "Threshold value (0-100) for percentage errors to be considered acceptable ('green') in the binary percentage error map.",
+      "schema": { "type": "number", "minimum": 0, "maximum": 100 },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "thresholdvalfortruth": {
+      "title": "Observed population truth threshold",
+      "description": "Threshold value (0-100) for the observed census grid population, above which a cell with 100% error is flagged as a special non-estimated case rather than plotted as a normal error.",
+      "schema": { "type": "number", "minimum": 0, "maximum": 100 },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile14_metrics_rds": {
+      "title": "Accuracy metrics (weighted)",
+      "description": "Path to an .rds file containing accuracy metrics for the weighted dasymetric refinement.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile15_metricsSimple_rds": {
+      "title": "Accuracy metrics (simple/unweighted)",
+      "description": "Path to an .rds file containing accuracy metrics for the simple (unweighted) refinement, for comparison.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    }
+  },
+  "outputs": {
+    "input_weights_histogram": {
+      "title": "Input weights histogram",
+      "description": "Interactive stacked bar chart of the distribution of input weights across CORINE land cover classes.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "cor_distribution_across_lau_histogram": {
+      "title": "CORINE class distribution across LAU histogram",
+      "description": "Interactive histogram of the number of LAU containing each urban CORINE class.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "census_grid_map": {
+      "title": "Census grid population map",
+      "description": "Interactive map of observed census grid population for reference year 2021.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "lau_in_catch_focus_map": {
+      "title": "LAU population map (focus year)",
+      "description": "Interactive map of observed LAU population density within the catchment for the focus year.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "lau_in_catch_reference_map": {
+      "title": "LAU population map (reference year 2021)",
+      "description": "Interactive map of observed LAU population density within the catchment for reference year 2021.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "corineCLC_valid_map": {
+      "title": "Valid CORINE CLC map",
+      "description": "Interactive map of the CORINE CLC classes applied in the refinement.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "corineCLCoverlappingPosCensusgrid_map": {
+      "title": "CORINE CLC overlapping populated census grid map",
+      "description": "Interactive map of CORINE CLC cells overlapping census grid cells with positive observed population.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "refinement_map": {
+      "title": "Estimated population map",
+      "description": "Interactive map of estimated population at CORINE cell level for the focus year.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "error_map": {
+      "title": "Absolute error map",
+      "description": "Interactive map of absolute differences between estimated and observed population at the census grid level.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "binaryPercError_map": {
+      "title": "Percentage error map (binary classes)",
+      "description": "Interactive map distinguishing smaller vs. larger percentage errors between estimated and observed population, with special handling for non-estimated cells above the truth threshold.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "histogram_errorsDistributedOnDensClasses": {
+      "title": "Error distribution by density class histogram",
+      "description": "Interactive histogram of average absolute error distributed across observed population density classes.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    },
+    "histogram_metrics": {
+      "title": "Accuracy metrics histograms",
+      "description": "Combined HTML page embedding one interactive histogram per accuracy metric, comparing weighted vs. simple (unweighted) refinement.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_weightTable_rds": "weight_table_final.rds",
+      "inputFile2_clcLegend_rds": "clc_legend.rds",
+      "inputFile3_coryear2018_rds": "coryear2018.rds",
+      "inputFile4_cellStatistics_rds": "lau_cell_counts_weighted2018.rds",
+      "inputFile5_censusgrid_rds": "censusgrid.rds",
+      "inputFile6_evaluateWeighted_rds": "evaluate_weighted_2021.rds",
+      "inputFile7_catchment_gpkg": "catchment.gpkg",
+      "inputFile8_popFocusYear_rds": "2018.rds",
+      "inputFile9_lauInCatchFocus_rds": "lau_2018_catchment.rds",
+      "inputFile10_lauInCatchReference_rds": "lau_2021_catchment.rds",
+      "inputFile11_corineCLCvalid_rds": "corine2018_valid.rds",
+      "inputFile12_corineCLConlyPositive_rds": "corineCLC2018overlappingPositivePop2021.rds",
+      "inputFile13_refinement_rds": "refinement_weighted_2021.rds",
+      "thresholdval": “50”,
+      "thresholdvalfortruth": “10”,
+      "inputFile14_metrics_rds": "metrics_weighted.rds",
+      "inputFile15_metricsSimple_rds": "metrics_simple.rds"
+    }
+  }
+}
