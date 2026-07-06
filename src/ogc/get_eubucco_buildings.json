@@ -1,0 +1,52 @@
+{
+  "version": "0.1.0",
+  "id": "get-eubucco-buildings",
+  "use_case": "Human Population",
+  "title": {
+    "en": "Get EUBUCCO building footprints for catchment"
+  },
+  "description": {
+    "en": "Fetches building footprint data from the EUBUCCO v0.2 dataset (https://eubucco.com) for all NUTS2 regions overlapping a given catchment, combines and deduplicates results, and returns them as a single spatial object with attributes including construction year, type, height, and floors (R function 'get_eubucco_buildings')"
+  },
+  "jobControlOptions": ["sync-execute", "async-execute"],
+  "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "EUBUCCO", "buildings", "catchment"],
+  "links": [{
+    "type": "text/html",
+    "rel": "about",
+    "title": "information",
+    "href": "https://example.org/process",
+    "hreflang": "en-US"
+  }],
+ "inputs": {
+    "inputFile1_catchment_gpkg": {
+      "title": "Catchment boundary",
+      "description": "Path to a .gpkg file containing the catchment (or other area of interest) polygon used to find overlapping NUTS2 regions and clip the returned buildings.",
+      "schema": { "type": "object", "contentMediaType": "application/geopackage+sqlite3" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    },
+    "inputFile2_countriesForCatchment_rds": {
+      "title": "Countries overlapping catchment",
+      "description": "Path to an .rds file containing the list of country codes overlapping the catchment, used to restrict the NUTS2 region search.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" },
+      "minOccurs": 1, "maxOccurs": 1, "keywords": []
+    }
+  },
+  "outputs": {
+    "buildings_rds": {
+      "title": "EUBUCCO building footprints",
+      "description": "Spatial object (sf) of EUBUCCO v0.2 building footprints for the catchment, deduplicated across NUTS2 regions, with attributes including type, height, floors, and construction year where available.",
+      "schema": { "type": "object", "contentMediaType": "application/x-rds" }
+    },
+    "cor_distribution_across_lau_histogram": {
+      "title": "CORINE class distribution across LAU histogram",
+      "description": "Interactive histogram of the number of LAU containing each urban CORINE class.",
+      "schema": { "type": "object", "contentMediaType": "text/html" }
+    }
+  },
+  "example": {
+    "inputs": {
+      "inputFile1_catchment_gpkg": "catchment.gpkg",
+      "inputFile2_countriesForCatchment_rds": "countries.rds"
+    }
+  }
+}
