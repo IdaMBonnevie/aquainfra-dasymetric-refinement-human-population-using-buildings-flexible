@@ -17,7 +17,6 @@ options(scipen = 100, digits = 4)
 # --- 3. FUNCTION DEFINITION (Original Code) ---
 calculate_weighting <- function(census_grid_geom,
                                 cor_raster_geom,
-                                cor_urban_values,
                                 cor_name_raster_columnname, 
                                 cor_code_raster_columnname,
                                 clc_legend = clc_legend,
@@ -241,15 +240,14 @@ calculate_weighting <- function(census_grid_geom,
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) != 6) {
-  stop("Usage: Rscript src/calculate_weighting.R <censusgrid_selected_rds_path> <corineCLC_cropped_rds_path> <cor_urban_values_rds_path> <corine_year_rds_path> <clc_legend_rds_path> <weight_table_rds_path>", call. = FALSE)
+if (length(args) != 5) {
+  stop("Usage: Rscript src/calculate_weighting.R <censusgrid_selected_rds_path> <corineCLC_cropped_rds_path> <corine_year_rds_path> <clc_legend_rds_path> <weight_table_rds_path>", call. = FALSE)
 }
 
 censusgrid_selected_rds_path <- args[1]
 corineCLC_cropped_rds_path <- args[2]
-cor_urban_values_rds_path <- args[3]
 
-corine_year_rds_path <- args[4]
+corine_year_rds_path <- args[3]
 corine_year <- readRDS(corine_year_rds_path)
 corine_year <- as.character(corine_year)
 if (!(corine_year == "2018")) {
@@ -263,8 +261,8 @@ if (!(corine_year == "2018")) {
   )
 }
 
-clc_legend_rds_path <- args[5]
-weight_table_rds_path <- args[6]
+clc_legend_rds_path <- args[4]
+weight_table_rds_path <- args[5]
 
 message("D2K Wrapper Started for corine CLC retrieval.")
 
@@ -274,8 +272,6 @@ tryCatch({
   
   corine2018_cropped <- readRDS(corineCLC_cropped_rds_path)
   
-  cor_urban_values <- readRDS(cor_urban_values_rds_path)
-  
   cor_name_raster_columnname <- "LABEL"    
   cor_code_raster_columnname <- paste0("CODE_", substr(corine_year, 3, 4)) # e.g. "CODE_18"
 
@@ -284,7 +280,6 @@ tryCatch({
   # calculate weighting
   weight_table_final <- calculate_weighting(census_grid_geom = census_grid,
                                             cor_raster_geom = corine2018_cropped,
-                                            cor_urban_values = cor_urban_values,
                                             cor_name_raster_columnname = cor_name_raster_columnname, 
                                             cor_code_raster_columnname = cor_code_raster_columnname,
                                             clc_legend = clc_legend,
