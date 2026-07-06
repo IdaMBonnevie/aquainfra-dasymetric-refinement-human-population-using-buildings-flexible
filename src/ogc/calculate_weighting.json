@@ -6,7 +6,7 @@
     "en": "Calculate dasymetric weighting table"
   },
   "description": {
-    "en": ""Calculates population-density-based weights per CORINE Land Cover class by overlapping the Eurostat census grid (human population) with the CORINE CLC 2018 raster, treating continuous urban fabric (111) and discontinuous urban fabric (112) classes separately from all other CORINE Land Cover classes (R function 'calculate_weighting')"
+    "en": "Calculates population-density-based weights per CORINE Land Cover class by overlapping the Eurostat census grid (human population) with the CORINE CLC 2018 raster, treating continuous urban fabric (111) and discontinuous urban fabric (112) classes separately from all other CORINE Land Cover classes (R function 'calculate_weighting')"
   },
   "jobControlOptions": ["sync-execute", "async-execute"],
   "keywords": ["human population use case", "AquaINFRA", "dasymetric mapping", "CORINE", "census grid", "weighting"],
