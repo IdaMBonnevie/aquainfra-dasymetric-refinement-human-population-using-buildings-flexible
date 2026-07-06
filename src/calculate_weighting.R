@@ -25,8 +25,15 @@ calculate_weighting <- function(census_grid_geom,
   
   # get census_grid as terra vector
   census_vect <- terra::vect(census_grid_geom)
-  
-  # FIRST: TREAT CATEGORY 111 CONTINUOUS URBAN 
+
+  # Only keep cells with positive population — avoids diluting the density
+  # calculation with zero/NA-population cells further down (zonal mean, etc.)
+  census_vect <- census_vect[
+    !is.na(census_vect[[census_grid_value_col]]) &
+      census_vect[[census_grid_value_col]] > 0,
+  ]
+
+  # FIRST: TREAT CATEGORY 111 CONTINUOUS URBAN
   # keep only urban corine classes in country specific corine raster
   cor_111 <- terra::classify(
     cor_raster_geom,
@@ -140,12 +147,12 @@ calculate_weighting <- function(census_grid_geom,
   
   # THIRD: TREAT OTHER CATEGORIES
   
-  # USE ONLY OTHER URBAN CORINE CLASSES: 
-  cor_urban_values_other <- cor_urban_values[!cor_urban_values %in% c(111, 112)]
+  # USE OTHER CORINE CLASSES: 
+  cor_values_other <- clc_legend$CODE_18[!clc_legend$CODE_18 %in% c(111, 112)]
 
   cor_other_artificial <- terra::classify(
     cor_raster_geom,
-    rcl = cbind(cor_urban_values_other, cor_urban_values_other),
+    rcl = cbind(cor_values_other, cor_values_other),
     others = NA
   )
   
@@ -186,11 +193,11 @@ calculate_weighting <- function(census_grid_geom,
                             na.rm = TRUE) # ignore NA values
   
   if ((exists("avg_111")) && (exists("avg_112"))) {
-    avg_pop_per_corineF1 <- rbind(avg_111, avg_112, avg_other_sub)
+    avg_pop_per_corineF1 <- rbind(avg_111, avg_112, avg_other)
   } else if (exists("avg_111")) {
-    avg_pop_per_corineF1 <- rbind(avg_111, avg_other_sub)
+    avg_pop_per_corineF1 <- rbind(avg_111, avg_other)
   } else if (exists("avg_112")) {
-    avg_pop_per_corineF1 <- rbind(avg_112, avg_other_sub)
+    avg_pop_per_corineF1 <- rbind(avg_112, avg_other)
   }
   
   avg_pop_per_corineF1 <- avg_pop_per_corineF1[!is.na(avg_pop_per_corineF1[[census_grid_value_col]]), ]
@@ -201,10 +208,10 @@ calculate_weighting <- function(census_grid_geom,
   # Add sum of all mean cases as column in statistics table: 
   avg_pop_per_corineF1$percent <- round(avg_pop_per_corineF1[[census_grid_value_col]] / total_avg_sumF1 * 100, 2)  
 
-    # Filter on percent
-  avg_pop_per_corineF1 <- avg_pop_per_corineF1[
-    avg_pop_per_corineF1$percent >= 1.0, 
-  ]
+  # Filter on percent
+  #avg_pop_per_corineF1 <- avg_pop_per_corineF1[
+  #  avg_pop_per_corineF1$percent >= 1.0, 
+  #]
   
   ####### COMBINED WEIGHTING 
   # Turn string into variable
