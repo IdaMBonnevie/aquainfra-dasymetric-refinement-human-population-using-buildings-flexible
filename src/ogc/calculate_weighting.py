@@ -49,21 +49,18 @@ class CalculateWeightingProcessor(BaseProcessor):
         # User inputs
         in_inputFile1_censusgridSelected_rds = data.get('inputFile1_censusgridSelected_rds')
         in_inputFile2_corineCLCcropped_rds = data.get('inputFile2_corineCLCcropped_rds')
-        in_inputFile3_corUrbanValues_rds = data.get('inputFile3_corUrbanValues_rds')
-        in_inputFile4_corineYear_rds = data.get('inputFile4_corineYear_rds')
-        in_inputFile5_clcLegend_rds = data.get('inputFile5_clcLegend_rds')
+        in_inputFile3_corineYear_rds = data.get('inputFile4_corineYear_rds')
+        in_inputFile4_clcLegend_rds = data.get('inputFile5_clcLegend_rds')
 
         # Check user inputs
         if in_inputFile1_censusgridSelected_rds is None:
             raise ProcessorExecuteError('Missing parameter "inputFile1_censusgridSelected_rds". Please provide a inputFile1_censusgridSelected_rds.')
         if in_inputFile2_corineCLCcropped_rds is None:
             raise ProcessorExecuteError('Missing parameter "inputFile2_corineCLCcropped_rds". Please provide a inputFile2_corineCLCcropped_rds.')
-        if in_inputFile3_corUrbanValues_rds is None:
-            raise ProcessorExecuteError('Missing parameter "inputFile3_corUrbanValues_rds". Please provide a inputFile3_corUrbanValues_rds.')
-        if in_inputFile4_corineYear_rds is None:
-            raise ProcessorExecuteError('Missing parameter "inputFile4_corineYear_rds". Please provide a inputFile4_corineYear_rds.')
-        if in_inputFile5_clcLegend_rds is None:
-            raise ProcessorExecuteError('Missing parameter "inputFile5_clcLegend_rds". Please provide a inputFile5_clcLegend_rds.')
+        if in_inputFile3_corineYear_rds is None:
+            raise ProcessorExecuteError('Missing parameter "inputFile3_corineYear_rds". Please provide a inputFile3_corineYear_rds.')
+        if in_inputFile4_clcLegend_rds is None:
+            raise ProcessorExecuteError('Missing parameter "inputFile4_clcLegend_rds". Please provide a inputFile4_clcLegend_rds.')
 
         # Where to store output data
         weight_table_filename = 'weight_table-%s.rds' % self.my_job_id
@@ -76,9 +73,8 @@ class CalculateWeightingProcessor(BaseProcessor):
         script_args = [
             in_inputFile1_censusgridSelected_rds,
             in_inputFile2_corineCLCcropped_rds,
-            in_inputFile3_corUrbanValues_rds,
-            in_inputFile4_corineYear_rds,
-            in_inputFile5_clcLegend_rds,
+            in_inputFile3_corineYear_rds,
+            in_inputFile4_clcLegend_rds,
             weight_table_filepath
         ]
 
