@@ -313,7 +313,7 @@ dasymetric_refinement_raster <- function(cor_rast_geom,
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) != 15) {
-  stop("Usage: Rscript src/dasymetric_refinement_new.R <refinement_type> <corineCLC_rds_path> <corine_year_rds_path> <lau_in_catchment_rds_path> <pop_focus_year_rds_path> <catchment_gpkg_path> <weight_table_rds_path> <buildings_rds_path> <census_grid_rds_path> <best_threshold_if_existing_rds_path> <output_refinement_rds_path> <output_refinement_tif_path> <output_cell_statistics_rds_path> <output_corine_final_rds_path> <output_best_threshold_rds_path>", call. = FALSE)
+  stop("Usage: Rscript src/dasymetric_refinement.R <refinement_type> <corineCLC_rds_path> <corine_year_rds_path> <lau_in_catchment_rds_path> <pop_focus_year_rds_path> <catchment_gpkg_path> <weight_table_rds_path> <buildings_rds_path> <census_grid_rds_path> <best_threshold_if_existing_rds_path> <output_refinement_rds_path> <output_refinement_tif_path> <output_cell_statistics_rds_path> <output_corine_final_rds_path> <output_best_threshold_rds_path>", call. = FALSE)
 }
 
 refinement_type <- args[1]
